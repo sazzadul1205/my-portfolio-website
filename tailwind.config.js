@@ -13,5 +13,29 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        PortfolioTheme: {
+          primary: "#0077b6", // Blue theme color
+          secondary: "#00b4d8", // Light blue
+          accent: "#90e0ef", // Accent color
+          neutral: "#3d4451",
+          "base-100": "#ffffff",
+        },
+      },
+      {
+        PortfolioDark: {
+          primary: "#023047", // Dark blue
+          secondary: "#219ebc", // Vibrant blue
+          accent: "#8ecae6",
+          neutral: "#1e293b",
+          "base-100": "#0f172a",
+        },
+      },
+      "light",
+      "dark",
+    ],
+  },
 };
