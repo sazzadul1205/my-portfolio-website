@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -9,14 +9,17 @@ const Navbar = () => {
       setIsScrolled(window.scrollY > 0);
     };
 
-    // Add scroll listener
     window.addEventListener("scroll", handleScroll);
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // Example dropdown menu items
+  const dropdownItems = [
+    { id: 1, label: "Link 1", href: "/link1" },
+    { id: 2, label: "Link 2", href: "/link2" },
+  ];
 
   return (
     <div
@@ -30,17 +33,7 @@ const Navbar = () => {
       <div className="flex-none">
         <ul className="menu menu-horizontal px-1 items-center gap-5">
           <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="bg-blue-400 rounded- px-5 w-52 z-50">
-                <li>
-                  <a>Link 1</a>
-                </li>
-                <li>
-                  <a>Link 2</a>
-                </li>
-              </ul>
-            </details>
+            <Dropdown items={dropdownItems} title="Parent" />
           </li>
           <li>
             <input
@@ -51,6 +44,50 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
+    </div>
+  );
+};
+
+const Dropdown = ({ items, title }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Toggle dropdown
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
+
+  // Close dropdown when clicking outside
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <summary
+        tabIndex={0}
+        role="button"
+        onClick={toggleDropdown}
+        className="cursor-pointer"
+      >
+        {title}
+      </summary>
+      {isOpen && (
+        <ul className="absolute bg-blue-400 rounded-none p-2 w-52 z-50 shadow dropdown-content mt-36">
+          {items.map((item) => (
+            <li key={item.id} className="hover:bg-blue-700 font-semibold">
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
