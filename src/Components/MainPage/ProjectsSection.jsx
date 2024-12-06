@@ -8,61 +8,58 @@ import { GoVersions } from "react-icons/go";
 
 const projects = [
   {
-    _id: "674ec5997d874ef1b3843f88",
     title: "Fresh and Fit",
     createdBy: "ReactJs",
+    updatedDate: "11-12-2023",
     liveLink: "https://fresh-and-fit-c2dc3.web.app/",
     githubLink: "https://github.com/sazzadul1205/fresh-and-fit-client",
     image: "https://i.ibb.co/JpFCLG2/Web-Image1.png",
   },
   {
-    _id: "674ec5997d874ef1b3843f89",
     title: "Nexcent",
     createdBy: "ReactJs",
+    updatedDate: "08-01-2024",
     liveLink: "https://nexcent-88b82.web.app/",
     githubLink: "https://github.com/sazzadul1205/Nexcentt",
     image: "https://i.ibb.co/nBFLRvS/Web-Image6.png",
   },
   {
-    _id: "674ec5997d874ef1b3843f86",
     title: "Convert Me",
     createdBy: "ReactJs",
+    updatedDate: "21-08-2024",
     liveLink: "https://convert-me-f361a.web.app/",
     githubLink: "https://github.com/sazzadul1205/Convert-Me-client",
     image: "https://i.ibb.co/FKdvnmj/Web-Image5.png",
   },
   {
-    _id: "674ec5997d874ef1b3843f8b",
     title: "Electron E-Commerce",
     createdBy: "ReactJs",
+    updatedDate: "03-02-2024",
     liveLink: "https://electon-ecommerce-cd299.web.app",
     githubLink:
       "https://github.com/sazzadul1205/Electron-E-Commerce-Website-Client",
     image: "https://i.ibb.co/FBwzD67/Web-Image7.png",
   },
   {
-    _id: "674ec5997d874ef1b3843f87",
     title: "Task Manager",
     createdBy: "ReactJs",
+    updatedDate: "22-12-2023",
     liveLink: "https://task-manager-ea274.web.app/",
     githubLink: "https://github.com/sazzadul1205/Brand-shop-client",
     image: "https://i.ibb.co/qJfV3nB/Web-Image4.png",
   },
   {
-    _id: "674ec5997d874ef1b3843f8a",
     title: "Sazzad Advert",
     createdBy: "ReactJs",
+    updatedDate: "29-09-2024",
     liveLink: "https://sazz-advert.web.app/",
     githubLink: "https://github.com/sazzadul1205/SazzAdvert-client",
     image: "https://i.ibb.co/8PnnSHr/Web-Image9.png",
   },
   {
-    _id: "674ec5997d874ef1b3843f84",
     title: "Mobile Brand Shop",
     createdBy: "ReactJs",
-    liveLink: "https://mobile-brand-shop.web.app/",
-    githubLink: "https://github.com/sazzadul1205/Mobile-Brand-Shop-Client",
-    image: "https://i.ibb.co.com/wcVcG5V/banner001.png",
+    updatedDate: "04-09-2024",
     versions: [
       {
         version: "1.0",
@@ -81,12 +78,9 @@ const projects = [
     ],
   },
   {
-    _id: "674ec5997d874ef1b3843f85",
     title: "Master Job Shop",
     createdBy: "ReactJs",
-    liveLink: "https://master-job-shop.web.app/",
-    githubLink: "https://github.com/sazzadul1205/Master-Job-Shop-Client",
-    image: "https://i.ibb.co.com/8Ksw6d6/banner002.png",
+    updatedDate: "24-09-2024",
     versions: [
       {
         version: "1.0",
@@ -100,19 +94,41 @@ const projects = [
         title: "Master Job Shop",
         liveLink: "https://master-job-shop.web.app/",
         githubLink: "https://github.com/sazzadul1205/Master-Job-Shop-Client",
-        image: "https://i.ibb.co/com/4dCDKxy/tetgbadgbdsfb.png",
+        image: "https://i.ibb.co.com/YWKnB5V/masterbanner.png",
       },
     ],
   },
   {
-    _id: "6751445bf4c99f50ae3d4309",
     title: "SIPI School Website",
     createdBy: "ReactJs (Group)",
+    updatedDate: "22-11-2024",
     liveLink: "https://sipi-website-da327.web.app/",
-    githubLink: "https://github.com/fahim-farhad1/sipi-website2",
+    githubLink: "https://github.com/fahim-farhad1/sipi-website2/tree/sazzad",
     image: "https://i.ibb.co.com/ZVw0Y7h/Screenshot-5.png",
   },
 ];
+
+const sortedProjects = projects.sort((a, b) => {
+  // Helper function to get the latest updated date
+  const getLatestDate = (project) => {
+    // Check if the project has versions and get the last version's date
+    if (project.versions && project.versions.length > 0) {
+      return new Date(
+        project.versions[project.versions.length - 1].updatedDate ||
+          "1970-01-01"
+      );
+    }
+    // Otherwise, use the main project's updatedDate
+    return new Date(project.updatedDate || "1970-01-01");
+  };
+
+  // Parse dates for both projects being compared
+  const dateA = getLatestDate(a);
+  const dateB = getLatestDate(b);
+
+  // Sort by descending date (most recent first)
+  return dateB - dateA; // `dateB - dateA` ensures most recent comes first
+});
 
 const ProjectsSection = () => {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -125,13 +141,14 @@ const ProjectsSection = () => {
     <section className="bg-gradient-to-bl from-purple-600 to-blue-500 text-slate-200 py-56">
       <div className="container mx-auto max-w-[1200px] px-6 sm:px-16">
         {/* Section Header */}
-        <h2 className="text-4xl font-bold text-center mb-10 text-blue-300">
+        <h2 className="text-4xl font-bold text-center text-white">
           My Projects
         </h2>
+        <div className="p-[2px] bg-white my-2"></div>
 
         {/* Project Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-3">
+          {sortedProjects.map((project, index) => {
             const latestVersion = project.versions
               ? project.versions[project.versions.length - 1]
               : null;
@@ -190,6 +207,10 @@ const ProjectsSection = () => {
                     {latestVersion ? latestVersion.title : project.title}
                   </h3>
                   <p className="text-sm mb-2">{project.createdBy}</p>
+                  <p className="text-sm">
+                    Updated Date:
+                    {project.updatedDate}
+                  </p>
                 </div>
               </div>
             );
