@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Typewriter } from "react-simple-typewriter";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,62 +11,62 @@ import {
   FaLinkedinIn,
 } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-
-// In-page JSON data
-const socialLinks = {
-  google: "mailto:Psazzadul@gmail.com",
-  facebook: "https://www.facebook.com/sazzadul.islam.pritom/",
-  twitter: "https://x.com/sazzadu84352084",
-  github: "https://github.com/sazzadul1205",
-  linkedin: "https://www.linkedin.com/in/sazzadul-islam-molla-6905b3293/",
-};
-
-const data = {
-  name: "Sazzadul Islam Molla",
-  profileImage: "https://i.ibb.co.com/rySmtJw/User-Images.jpg",
-  tagline:
-    "I specialize in crafting cutting-edge, scalable, and high-performing web applications tailored to meet your unique needs. From seamless user experiences to robust backend systems, I bring your ideas to life with precision and creativity.",
-  resumeLink: "/resume.pdf",
-  typewriterWords: [
-    "MERN Stack Developer",
-    "Next.js Specialist",
-    "JavaScript Enthusiast",
-    "React Expert",
-    "Node.js Developer",
-    "Full-Stack Engineer",
-    "API Integration Specialist",
-    "Problem Solver",
-    "Frontend Designer",
-    "Backend Developer",
-    "Team Player",
-    "Tech Enthusiast",
-    "Continuous Learner",
-  ],
-};
+import { getHeroData } from "@/Services/getHeroData";
+import { getSocial } from "@/Services/getSocial";
+import { ColorRing } from "react-loader-spinner";
 
 const HeroSection = () => {
+  const [hero, setHero] = useState(null);
+  const [socialLinks, setSocialLinks] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const HeroData = await getHeroData();
+      setHero(HeroData[0]);
+
+      const SocialData = await getSocial();
+      setSocialLinks(SocialData[0]);
+    };
+
+    fetchData();
+  }, []);
+
+  if (!hero || !socialLinks) {
+    return (
+      <div className="bg-gradient-to-tr from-blue-500 to-purple-600 text-white min-h-screen flex justify-center items-center">
+        <ColorRing
+          visible={true}
+          height="200"
+          width="200"
+          ariaLabel="color-ring-loading"
+          wrapperStyle={{}}
+          wrapperClass="color-ring-wrapper"
+          colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+        />
+      </div>
+    );
+  }
+
   return (
     <section className="bg-gradient-to-tr from-blue-500 to-purple-600 text-white">
       <div className="mx-auto max-w-[1200px] flex flex-row items-center gap-5 py-56 justify-between">
-        {/* Professional Photo or Avatar */}
         <div className="w-[350px] h-[350px] overflow-hidden border-4 border-white">
           <Image
-            src={data.profileImage}
-            alt={data.name}
+            src={hero.profileImage}
+            alt={hero.name}
             width={200}
             height={200}
             className="w-full h-full object-cover"
           />
         </div>
         <div className="text-right">
-          {/* Name and Title */}
           <h1 className="text-4xl font-bold mt-6">Hello,</h1>
-          <h2 className="text-4xl font-bold mt-6">{data.name}</h2>
+          <h2 className="text-4xl font-bold mt-6">{hero.name}</h2>
           <h3 className="text-xl font-medium mt-2">
             <span>I am a </span>
             <span>
               <Typewriter
-                words={data.typewriterWords}
+                words={hero.typewriterWords}
                 loop={Infinity}
                 cursor
                 cursorStyle="|"
@@ -76,30 +76,25 @@ const HeroSection = () => {
               />
             </span>
           </h3>
-
-          {/* Tagline */}
           <p className="text-lg mt-4 max-w-2xl leading-relaxed">
-            {data.tagline}
+            {hero.tagline}
           </p>
-
-          {/* Call-to-Action Buttons */}
           <div className="mt-6 flex space-x-4 justify-end">
             <a
-              href={data.resumeLink}
+              href={hero.resumeLink}
               className="bg-transparent border-2 border-white px-6 py-3 rounded-lg hover:bg-white hover:text-blue-600 transition items-center gap-5 flex font-semibold"
               download
             >
               <FaArrowLeft />
               <span>View My Resume</span>
             </a>
-            {/* Social Links Section */}
             <nav className="flex gap-2 mt-4 sm:mt-0">
               <Link
                 href={socialLinks.google}
                 className="text-xl hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="Google"
-                target="_blank" // Open in a new tab
-                rel="noopener noreferrer" // For security
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FcGoogle />
               </Link>
@@ -107,8 +102,8 @@ const HeroSection = () => {
                 href={socialLinks.facebook}
                 className="text-xl text-blue-600 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="Facebook"
-                target="_blank" // Open in a new tab
-                rel="noopener noreferrer" // For security
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FaFacebookF />
               </Link>
@@ -116,12 +111,12 @@ const HeroSection = () => {
                 href={socialLinks.twitter}
                 className="text-xl text-blue-400 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="Twitter"
-                target="_blank" // Open in a new tab
-                rel="noopener noreferrer" // For security
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Image
                   src={"/MyImage/twitter.png"}
-                  alt={"/MyImage/twitter.png"}
+                  alt={"Twitter Icon"}
                   width={20}
                   height={20}
                   className="w-5 h-5"
@@ -131,8 +126,8 @@ const HeroSection = () => {
                 href={socialLinks.github}
                 className="text-xl text-gray-800 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="GitHub"
-                target="_blank" // Open in a new tab
-                rel="noopener noreferrer" // For security
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FaGithub />
               </Link>
@@ -140,8 +135,8 @@ const HeroSection = () => {
                 href={socialLinks.linkedin}
                 className="text-xl text-blue-700 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="LinkedIn"
-                target="_blank" // Open in a new tab
-                rel="noopener noreferrer" // For security
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FaLinkedinIn />
               </Link>
