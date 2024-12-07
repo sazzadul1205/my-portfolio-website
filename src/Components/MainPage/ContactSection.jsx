@@ -1,22 +1,51 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
 import { FaFacebookF, FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import Form from "../Form";
+import { getContact } from "@/Services/getContact";
+import { getSocial } from "@/Services/getSocial";
+import { ColorRing } from "react-loader-spinner";
 
 const ContactSection = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [loading, setLoading] = useState(true);
+  const [ContactsData, setContactsData] = useState(null);
+  const [socialLinks, setSocialLinks] = useState(null);
 
-  const onSubmit = (data) => {
-    console.log("Form Submitted Data:", data);
-    alert("Message Sent Successfully!");
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const contact = await getContact();
+        const socialData = await getSocial();
+
+        setContactsData(contact[0]);
+        setSocialLinks(socialData[0]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-tr from-blue-500 to-purple-600 text-white min-h-screen flex justify-center items-center">
+        <ColorRing
+          visible={true}
+          height="100"
+          width="100"
+          ariaLabel="loading-spinner"
+          colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+        />
+      </div>
+    );
+  }
 
   return (
     <section className="bg-gradient-to-br from-blue-500 to-purple-600 text-slate-200 py-56">
@@ -24,167 +53,77 @@ const ContactSection = () => {
         {/* Section Title */}
         <h2 className="text-4xl font-bold text-center mb-8">Get in Touch</h2>
         <p className="text-center text-lg mb-12 max-w-2xl mx-auto">
-          Whether you have a question or just want to say hi, I’ll try my best
-          to get back to you!
+          {ContactsData?.intro}
         </p>
 
         {/* Form and Social Links */}
         <div className="flex gap-8 items-start">
           {/* Contact Form */}
-          <div className="bg-white shadow-lg rounded-lg p-8 w-1/2">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Name Input */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-gray-700 font-medium"
-                >
-                  Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  {...register("name", { required: "Name is required" })}
-                  className={`w-full mt-2 p-3 border bg-white text-black rounded-lg transition focus:outline-none focus:ring-2 ${
-                    errors.name
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
-                  }`}
-                  placeholder="Your Name"
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Email Input */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-gray-700 font-medium"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value:
-                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                      message: "Enter a valid email address",
-                    },
-                  })}
-                  className={`w-full mt-2 p-3 border bg-white text-black rounded-lg transition focus:outline-none focus:ring-2 ${
-                    errors.email
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
-                  }`}
-                  placeholder="Your Email"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Message Input */}
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-gray-700 font-medium"
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  {...register("message", { required: "Message is required" })}
-                  className={`w-full mt-2 p-3 border bg-white text-black rounded-lg transition focus:outline-none focus:ring-2 ${
-                    errors.message
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
-                  }`}
-                  rows="5"
-                  placeholder="Your Message"
-                ></textarea>
-                {errors.message && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.message.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-lg text-lg hover:bg-blue-700 transition"
-              >
-                Send Message
-              </button>
-            </form>
-          </div>
+          <Form />
 
           {/* Social Media & Contact Info */}
           <div className="text-center md:text-left pt-10 w-1/2">
             <h3 className="text-4xl font-semibold">Connect Me</h3>
             {/* Social Links Section */}
-            <nav className="flex gap-2 pt-5">
+            <nav className="flex gap-2 mt-4 sm:mt-0">
               <Link
-                href="mailto:Psazzadul@gmail.com"
+                href={socialLinks?.google}
                 className="text-xl hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="Google"
-                target="_blank" // Open in a new tab
-                rel="noopener noreferrer" // For security
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FcGoogle />
               </Link>
               <Link
-                href="https://www.facebook.com/sazzadul.islam.pritom/"
+                href={socialLinks?.facebook}
                 className="text-xl text-blue-600 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="Facebook"
-                target="_blank" // Open in a new tab
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FaFacebookF />
               </Link>
               <Link
-                href="https://x.com/sazzadu84352084"
+                href={socialLinks?.twitter}
                 className="text-xl text-blue-400 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="Twitter"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Image
                   src={"/MyImage/twitter.png"}
-                  alt={"/MyImage/twitter.png"}
+                  alt={"Twitter Icon"}
                   width={20}
                   height={20}
                   className="w-5 h-5"
                 />
               </Link>
               <Link
-                href="https://github.com/sazzadul1205"
+                href={socialLinks?.github}
                 className="text-xl text-gray-800 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="GitHub"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FaGithub />
               </Link>
               <Link
-                href="https://www.linkedin.com/in/sazzadul-islam-molla-6905b3293/"
+                href={socialLinks?.linkedin}
                 className="text-xl text-blue-700 hover:scale-125 transition-transform transform bg-white p-3 rounded-full"
                 aria-label="LinkedIn"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <FaLinkedinIn />
               </Link>
             </nav>
 
             <p className="text-lg mb-2 pt-5">
-              <strong>Phone:</strong> (+880) 191-7335945
+              <strong>Phone:</strong> {ContactsData?.phone}
             </p>
             <p className="text-lg">
-              <strong>Address:</strong> Building No: 20 Road No: 04 shekhertek
-              mohammadpur, Dhaka, Bangladesh
+              <strong>Address:</strong> {ContactsData?.address}
             </p>
           </div>
         </div>

@@ -18,31 +18,46 @@ import { ColorRing } from "react-loader-spinner";
 const HeroSection = () => {
   const [hero, setHero] = useState(null);
   const [socialLinks, setSocialLinks] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const HeroData = await getHeroData();
-      setHero(HeroData[0]);
+      try {
+        const HeroData = await getHeroData();
+        const SocialData = await getSocial();
 
-      const SocialData = await getSocial();
-      setSocialLinks(SocialData[0]);
+        setHero(HeroData[0]);
+        setSocialLinks(SocialData[0]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
   }, []);
 
-  if (!hero || !socialLinks) {
+  if (loading) {
     return (
       <div className="bg-gradient-to-tr from-blue-500 to-purple-600 text-white min-h-screen flex justify-center items-center">
         <ColorRing
           visible={true}
-          height="200"
-          width="200"
-          ariaLabel="color-ring-loading"
-          wrapperStyle={{}}
-          wrapperClass="color-ring-wrapper"
+          height="100"
+          width="100"
+          ariaLabel="loading-spinner"
           colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
         />
+      </div>
+    );
+  }
+
+  if (!hero || !socialLinks) {
+    return (
+      <div className="bg-gradient-to-tr from-blue-500 to-purple-600 text-white min-h-screen flex justify-center items-center">
+        <p className="text-xl font-semibold">
+          Failed to load data. Please try again later.
+        </p>
       </div>
     );
   }

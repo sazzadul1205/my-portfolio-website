@@ -6,10 +6,12 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { FaGithub, FaLink } from "react-icons/fa";
 import { GoVersions } from "react-icons/go";
+import { ColorRing } from "react-loader-spinner";
 
 const ProjectsSection = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -18,6 +20,8 @@ const ProjectsSection = () => {
         setProjects(Projects);
       } catch (error) {
         console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
     fetchProjects();
@@ -32,6 +36,22 @@ const ProjectsSection = () => {
   const handleModalClose = () => {
     setSelectedProject(null);
   };
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-bl from-purple-600 to-blue-500 text-white min-h-screen flex justify-center items-center">
+        <ColorRing
+          visible={true}
+          height="200"
+          width="200"
+          ariaLabel="color-ring-loading"
+          wrapperStyle={{}}
+          wrapperClass="color-ring-wrapper"
+          colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+        />
+      </div>
+    );
+  }
 
   return (
     <section className="bg-gradient-to-bl from-purple-600 to-blue-500 text-slate-200 py-24">

@@ -1,15 +1,15 @@
-import AboutMeSection from "@/Components/MainPage/AboutMeSection";
-import ContactSection from "@/Components/MainPage/ContactSection";
 import HeroSection from "@/Components/MainPage/HeroSection";
+import AboutMeSection from "@/Components/MainPage/AboutMeSection";
 import ProjectsSection from "@/Components/MainPage/ProjectsSection";
+import ContactSection from "@/Components/MainPage/ContactSection";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div>
-      <HeroSection></HeroSection>
-      <AboutMeSection></AboutMeSection>
-      <ProjectsSection></ProjectsSection>
-      <ContactSection></ContactSection>
+      <HeroSection />
+      <AboutMeSection />
+      <ProjectsSection />
+      <ContactSection />
     </div>
   );
 }

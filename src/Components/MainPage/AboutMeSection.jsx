@@ -1,10 +1,54 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { getAboutMe } from "@/Services/getAboutMe";
 import Image from "next/image";
-import React from "react";
+import { ColorRing } from "react-loader-spinner";
 
-const AboutMeSection = async () => {
-  const AboutMe = await getAboutMe();
-  const AboutMeData = AboutMe[0];
+const AboutMeSection = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [aboutMeData, setAboutMeData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const AboutMe = await getAboutMe();
+        setAboutMeData(AboutMe[0]); // Assuming the first object is the data you need
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching About Me data:", err);
+        setError(true);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-tr from-blue-500 to-purple-600 text-white min-h-screen flex justify-center items-center">
+        <ColorRing
+          visible={true}
+          height="100"
+          width="100"
+          ariaLabel="loading-spinner"
+          colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+        />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-gradient-to-tr from-blue-500 to-purple-600 text-white min-h-screen flex justify-center items-center">
+        <p className="text-xl font-semibold">
+          Failed to load data. Please try again later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <section className="bg-gradient-to-br from-blue-500 to-purple-600 text-slate-200 py-56">
@@ -20,16 +64,16 @@ const AboutMeSection = async () => {
           {/* Biography */}
           <div className="pt-5">
             <h3 className="text-3xl font-semibold mb-4 ">
-              {AboutMeData?.bio?.title}
+              {aboutMeData?.bio?.title}
             </h3>
-            <p className="leading-relaxed">{AboutMeData?.bio?.content}</p>
+            <p className="leading-relaxed">{aboutMeData?.bio?.content}</p>
           </div>
 
           {/* Skills Summary */}
           <div className="mt-10">
             <h3 className="text-3xl font-semibold mb-4 ">My Skills</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
-              {AboutMeData?.skills?.map((skill, index) => (
+              {aboutMeData?.skills?.map((skill, index) => (
                 <div
                   key={index}
                   className="flex justify-center items-center bg-white p-5 rounded-lg shadow-md hover:shadow-xl transform hover:scale-110 transition-all duration-300 relative group"
